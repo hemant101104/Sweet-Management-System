@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import AddSweet from "./AddSweet";
 
 function Dashboard() {
   const [sweets, setSweets] = useState([]);
@@ -31,7 +30,11 @@ function Dashboard() {
 
       <div className="grid">
         {sweets
-          .filter(s => s.name.includes(search) || s.category.includes(search))
+          .filter(
+            s =>
+              s.name.toLowerCase().includes(search.toLowerCase()) ||
+              s.category.toLowerCase().includes(search.toLowerCase())
+          )
           .map(s => (
             <div className="card" key={s.id}>
               <h3>{s.name}</h3>
@@ -47,8 +50,6 @@ function Dashboard() {
             </div>
           ))}
       </div>
-
-      <AddSweet refresh={fetchSweets} />
     </div>
   );
 }

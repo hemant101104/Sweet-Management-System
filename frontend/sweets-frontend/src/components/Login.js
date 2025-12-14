@@ -1,23 +1,48 @@
 import { useState } from "react";
 import API from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const login = async () => {
-    const res = await API.post("/auth/login", { email, password });
-    localStorage.setItem("token", res.data.token);
-    window.location.href = "/dashboard";
+    try {
+      const res = await API.post("/auth/login", { email, password });
+
+      // store auth data
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role); // IMPORTANT
+      localStorage.setItem("email", email);
+
+      // go to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      alert("Invalid credentials");
+    }
   };
 
   return (
     <div className="card">
       <h2>Login</h2>
-      <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+
+      <input
+        placeholder="Email"
+        onChange={e => setEmail(e.target.value)}
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        onChange={e => setPassword(e.target.value)}
+      />
+
       <button onClick={login}>Login</button>
-      <p onClick={() => window.location.href="/register"}>New user? Register</p>
+
+      <p onClick={() => navigate("/register")} style={{ cursor: "pointer" }}>
+        New user? Register
+      </p>
     </div>
   );
 }
